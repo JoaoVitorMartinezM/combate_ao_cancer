@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta charset="UTF-8">
+    <title>Titulo</title>
+    <style>
+        body {
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+{% block content %}
+{% endblock content %}
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+        integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+        integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+        crossorigin="anonymous"></script>
+<script>
+
+    $(document).ready(function () {
+
+        //Esconde todos os passos e exibe o primeiro ao carregar a página
+        $('.step').hide();
+        $('.step').first().show();
+
+        //Exibe no topo em qual passo estamos pela ordem da div que esta visivel
+        var passoexibido = function () {
+            var index = parseInt($(".step:visible").index());
+            if (index == 0) {
+                //Se for o primeiro passo desabilita o botão de voltar
+                $("#prev").prop('disabled', true);
+            } else if (index == (parseInt($(".step").length) - 1)) {
+                //Se for o ultimo passo desabilita o botão de avançar
+                $("#next").prop('disabled', true);
+            } else {
+                //Em outras situações os dois serão habilitados
+                $("#next").prop('disabled', false);
+                $("#prev").prop('disabled', false);
+            }
+            $("#passo").html(index + 1);
+
+        };
+
+        //Executa a função ao carregar a página
+        passoexibido();
+
+        //avança para o próximo passo
+        $("#next").click(function () {
+            $(".step:visible").hide().next().show();
+            passoexibido();
+        });
+
+        //retrocede para o passo anterior
+        $("#prev").click(function () {
+            $(".step:visible").hide().prev().show();
+            passoexibido();
+        });
+
+    });
+</script>
+</body>
+</html>
