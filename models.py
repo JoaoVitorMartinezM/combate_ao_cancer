@@ -36,7 +36,7 @@ class Form(db.Model):
     def __init__(self, has_disease, smoke, quit_smoking, drink_rarely,
                  drink, have_cancer, history_of_cancer, went_dentist,
                  consume_mate, sunscreen, sunstroke, skin_lesion, user_mail):
-        self.date = datetime.date.today().strftime('%d/%m/%y %H:%M:%S')
+        self.date = datetime.date.today()
         self.has_disease = has_disease
         self.smoke = smoke
         self.quit_smoking = quit_smoking
@@ -52,6 +52,6 @@ class Form(db.Model):
         self.user_mail = user_mail
 
 
-
 with app.app_context():
     db.create_all()
+
