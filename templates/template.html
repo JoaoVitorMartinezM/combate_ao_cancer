@@ -5,6 +5,7 @@
           integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://getbootstrap.com/docs/5.3/assets/css/docs.css" rel="stylesheet">
+    <link rel="stylesheet" href="../static/index.css">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta charset="UTF-8">
     <title>Titulo</title>
@@ -44,6 +45,8 @@
         //Esconde todos os passos e exibe o primeiro ao carregar a página
         $('.step').hide();
         $('.step').first().show();
+        buttonToSubmit = false;
+
 
         //Exibe no topo em qual passo estamos pela ordem da div que esta visivel
         var passoexibido = function () {
@@ -52,8 +55,15 @@
                 //Se for o primeiro passo desabilita o botão de voltar
                 $("#prev").prop('disabled', true);
             } else if (index == (parseInt($(".step").length) - 1)) {
-                //Se for o ultimo passo desabilita o botão de avançar
-                $("#next").prop('disabled', true);
+                if (!buttonToSubmit){
+                    $("#next").text('Enviar');
+                    buttonToSubmit = true;
+                }else{
+                    $("#next").prop('type', 'submit');
+                }
+                return true
+
+
             } else {
                 //Em outras situações os dois serão habilitados
                 $("#next").prop('disabled', false);
@@ -68,13 +78,19 @@
 
         //avança para o próximo passo
         $("#next").click(function () {
-            $(".step:visible").hide().next().show();
-            passoexibido();
+            if (passoexibido()){
+                console.log();
+            } else {
+                $(".step:visible").hide().next().show();
+                passoexibido();
+            }
         });
 
         //retrocede para o passo anterior
         $("#prev").click(function () {
             $(".step:visible").hide().prev().show();
+            $("#next").text('Avançar');
+            buttonToSubmit = false;
             passoexibido();
         });
 

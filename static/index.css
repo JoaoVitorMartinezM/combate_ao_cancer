@@ -1,0 +1,82 @@
+body{
+    font-size: 16px !important;
+}
+
+#container{
+    box-sizing: border-box; padding: 0;
+}
+#forms{
+    background-color: #FFFFFF; box-sizing: border-box; padding: 0; border: black 1px solid; border-radius: 20px;
+
+
+}
+
+.card-header{
+    background-color: darkgrey;  border-radius: 20px 20px 0 0 !important;
+}
+
+.step{
+    height: 90%; border-radius: 20px; border: none;
+}
+
+.card-body{
+    display: flex; flex-direction: column; justify-content: space-evenly;
+}
+
+
+
+label{
+    font-weight: bolder;
+    font-size: medium;
+}
+
+@media (max-width: 1200px){
+    body{
+        font-size: 1rem;
+    }
+    .card-body{
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+    }
+
+    #first-step{
+        justify-content: flex-start !important;
+    }
+}
+
+@media (max-width: 992px){
+    #forms{
+        font-size: 0.9rem;
+    }
+
+    .btn{
+        font-size: 0.9rem !important;
+    }
+}
+
+@media (max-width: 768px){
+    #forms{
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 576px){
+    #forms{
+        font-size: 0.8rem ;
+    }
+
+}
+
+@media (max-width: 400px){
+    #forms{
+        font-size: 0.8rem ;
+    }
+
+    .btn{
+        font-size: 0.8rem !important;
+    }
+
+
+}
+

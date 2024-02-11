@@ -1,13 +1,13 @@
 {% extends 'template.html' %}
 {% block content %}
-<div id="container" class="row align-items-center col-md-6 offset-md-3">
+<div id="container" class="row align-items-center col-xl-6 offset-xl-3 col-md-8 offset-md-2 col-sm-10 offset-sm-1">
 
-    <form id="forms" class="needs-validation" method="POST" action="{{url_for('cadastrar')}}" enctype="multipart/form-data"
+    <form id="forms" style="" class="needs-validation col-10 offset-1 col-xl-10 offset-xl-1 shadow mb-5" method="POST" action="{{url_for('cadastrar')}}" enctype="multipart/form-data"
           novalidate>
-        <div class="card step">
-            <h5 class="card-header">DADOS PESSOAIS</h5>
-            <div class="card-body">
-                <div class="form-group col-md-6">
+        <div id="first-step" class="card step">
+            <h5 class="card-header header">DADOS PESSOAIS</h5>
+            <div class="card-body" >
+                <div class="form-group col-xl-8 col-md-8">
                     <label for="validationCustom01">Nome Completo</label>
                     <input type="text" name="full_name" class="form-control" id="validationCustom01" placeholder="Insira seu nome..."
                            required>
@@ -15,14 +15,14 @@
                         Campo obrigatório.
                     </div>
                 </div>
-                <div class="form-group col-md-6">
+                <div class="form-group col-xl-8 col-md-8">
                     <label for="email">E-mail</label>
                     <input type="email" name="email" class="form-control" id="email" placeholder="exemplo@dominio.com" required>
                     <div class="invalid-feedback">
                         Campo obrigatório.
                     </div>
                 </div>
-                <div class="form-group col-md-6">
+                <div class="form-group col-xl-8 col-md-8">
                     <label>Sexo</label>
                     <div class="custom-control custom-radio">
 
@@ -32,7 +32,7 @@
                             Masculino
                         </label>
                     </div>
-                    <div class="custom-control custom-radio col-md-6">
+                    <div class="custom-control custom-radio col-xl-8 col-md-8">
                         <input class="custom-control-input" type="radio" name="sexo" id="feminino"
                                value="feminino" required>
                         <label class="custom-control-label" for="feminino">
@@ -42,7 +42,7 @@
 
                     </div>
                 </div>
-                <div class="form-group col-md-6">
+                <div class="form-group col-xl-8 col-md-8">
                     <label for="data-nascimento">Data de Nascimento</label>
                     <input type="date" name="date" class="form-control" id="data-nascimento" required>
                     <div class="invalid-feedback">
@@ -56,42 +56,42 @@
         </div>
         <div class="card step">
             <h5 class="card-header">COMORBIDADES</h5>
-            <div class="card-body col-md-6">
-                <h5 class="card-title">Tem alguma das doenças abaixo?</h5>
-                <div class="custom-control custom-checkbox col-md-6">
-                    <input type="checkbox" class="custom-control-input" id="diabetes" name="diabetes" value="diabetes">
-                    <label class="custom-control-label" for="diabetes">Diabetes</label>
+            <div class="card-body col-xl-6 col-md-8">
+                <div>
+                    <h5 class="card-title">Tem alguma das doenças abaixo?</h5>
+                    <div class="custom-control custom-checkbox col-xl-6 col-md-8">
+                        <input type="checkbox" class="custom-control-input" id="diabetes" name="diabetes" value="diabetes">
+                        <label class="custom-control-label" for="diabetes">Diabetes</label>
 
+                    </div>
+                    <div class="custom-control custom-checkbox col-xl-6 col-md-8">
+                        <input type="checkbox" class="custom-control-input" id="hipertensao" name="hipertensao" value="hipertensao">
+                        <label class="custom-control-label" for="hipertensao">Hipertensão</label>
+                    </div>
+                    <div class="custom-control custom-checkbox col-xl-6 col-md-8">
+                        <input type="checkbox" class="custom-control-input" id="hipotirioidismo" name="hipotirioidismo" value="hipotirioidismo">
+                        <label class="custom-control-label" for="hipotirioidismo">Hipotirioidismo</label>
+                    </div>
+                    <div class="custom-control custom-checkbox col-xl-6 col-md-8">
+                        <input type="checkbox" class="custom-control-input" id="hiv" name="HIV" value="HIV">
+                        <label class="custom-control-label" for="hiv">HIV</label>
+                    </div>
+                    <div class="custom-control custom-checkbox col-xl-6 col-md-8">
+                        <input type="checkbox" class="custom-control-input" id="lupus" name="lupus" value="lupus">
+                        <label class="custom-control-label" for="lupus">Lúpus</label>
+                    </div>
+                    <div class="custom-control custom-checkbox col-xl-6 col-md-12">
+                        <input type="checkbox" class="custom-control-input col-md-1" id="outro" value="">
+                        <label class="custom-control-label col-md-6" for="outro">Outro: </label>
+                        <input class="border-right-0 border-top-0 border-left-0 col-md-5" name="outro" value="" type="text"/>
+                    </div>
                 </div>
-                <div class="custom-control custom-checkbox col-md-6 ">
-                    <input type="checkbox" class="custom-control-input" id="hipertensao" name="hipertensao" value="hipertensao">
-                    <label class="custom-control-label" for="hipertensao">Hipertensão</label>
-                </div>
-                <div class="custom-control custom-checkbox col-md-6">
-                    <input type="checkbox" class="custom-control-input" id="hipotirioidismo" name="hipotirioidismo" value="hipotirioidismo">
-                    <label class="custom-control-label" for="hipotirioidismo">Hipotirioidismo</label>
-                </div>
-                <div class="custom-control custom-checkbox">
-                    <input type="checkbox" class="custom-control-input" id="hiv" name="HIV" value="HIV">
-                    <label class="custom-control-label" for="hiv">HIV</label>
-                </div>
-                <div class="custom-control custom-checkbox col-md-6">
-                    <input type="checkbox" class="custom-control-input" id="lupus" name="lupus" value="lupus">
-                    <label class="custom-control-label" for="lupus">Lúpus</label>
-                </div>
-                <div class="custom-control custom-checkbox col-md-6">
-                    <input type="checkbox" class="custom-control-input" id="outro" value="">
-                    <label class="custom-control-label" for="outro">Outro: </label>
-                    <input class="border-right-0 border-top-0 border-left-0" name="outro" value="" type="text"/>
-                </div>
-
-
             </div>
         </div>
         <div class="card step">
             <h5 class="card-header">HÁBITOS SOCIAIS</h5>
             <div class="card-body">
-                <div class="form-group col-md-6" >
+                <div class="form-group col-xl-6 col-md-8" >
                     <label>Você fuma?</label>
                     <div class="custom-control custom-radio">
                         <input type="radio" id="fuma" value="fuma" name="habitos-sociais-1" class="custom-control-input" required>
@@ -112,7 +112,7 @@
                     </div>
 
                 </div>
-                <div class="form-group col-md-6">
+                <div class="form-group col-xl-6 col-md-8">
                     <label>Consome bebidas alcoólicas?</label>
                     <div class="custom-control custom-radio">
 
@@ -149,7 +149,7 @@
         <div class="card step">
             <h5 class="card-header">HISTÓRICO DE CANCÊR</h5>
             <div class="card-body">
-                <div class="form-group col-md-6">
+                <div class="form-group col-xl-6 col-md-8">
                     <label>Já teve câncer?</label>
                     <div class="custom-control custom-radio">
                         <input type="radio" id="teve-cancer" value="sim" name="historico-cancer-1"
@@ -166,7 +166,7 @@
                     </div>
 
                 </div>
-                <div class="form-group col-md-6">
+                <div class="form-group col-xl-6 col-md-8">
                     <label>Tem histórico de câncer na família?</label>
                     <div class="custom-control custom-radio">
 
@@ -196,7 +196,7 @@
         <div class="card step">
             <h5 class="card-header">LESÕES NA BOCA</h5>
             <div class="card-body">
-                <div class="form-group col-md-6">
+                <div class="form-group col-xl-6 col-md-8">
                     <label>Foi ao dentista no último ano?</label>
                     <div class="custom-control custom-radio">
                         <input type="radio" id="vai-ao-dentista" value="sim" name="lesoes-boca-1"
@@ -214,7 +214,7 @@
 
 
                 </div>
-                <div class="form-group col-md-6">
+                <div class="form-group col-xl-6 col-md-8">
                     <label>Consome chimarrão?</label>
                     <div class="custom-control custom-radio">
 
@@ -244,7 +244,7 @@
         <div class="card step">
             <h5 class="card-header">LESÕES NA PELE</h5>
             <div class="card-body">
-                <div class="form-group col-md-6">
+                <div class="form-group col-xl-6 col-md-8">
                     <label>Você usa protetor solar?</label>
                     <div class="custom-control custom-radio">
                         <input type="radio" id="usa" value="sim" name="lesoes-pele-1"
@@ -261,7 +261,7 @@
                     </div>
 
                 </div>
-                <div class="form-group col-md-6">
+                <div class="form-group col-xl-6 col-md-8">
                     <label>Você já teve insolação?</label>
                     <div class="custom-control custom-radio">
 
@@ -284,7 +284,7 @@
                         </div>
                     </div>
                 </div>
-                <div class=" col-md-6">
+                <div class=" col-xl-6 col-md-8">
                     <label>Tem alguma lesão na pele?</label>
                     <div class="custom-control custom-radio">
 
@@ -309,19 +309,17 @@
                 </div>
 
             </div>
-            <button type="submit" class="btn btn-primary col-md-4 offset-md-4">Enviar</button>
         </div>
 
-        <div class="row col-md-6 offset-md-3">
-        <div class="col-md-6">
-            <button type="button" class="btn btn-block btn-secundary" id="prev">Voltar</button>
-        </div>
-        <div class="col-md-6">
-            <button type="button"  class="btn btn-block btn-secundary" id="next">Avançar</button>
-        </div>
+        <div style="height: 10%" class="row col-xl-12 col-md-12 col-sm-12 col-12">
+            <div class="col-xl-3 offset-xl-3 col-md-3 offset-md-3 col-sm-3 offset-sm-3 col-5 offset-1">
+                <button type="button" class="btn btn-block btn-primary" id="prev">Voltar</button>
+            </div>
+            <div class="col-xl-3 col-md-3  col-sm-3 col-5">
+                <button type="button"  class="btn btn-block btn-primary" id="next">Avançar</button>
+            </div>
 
-
-    </div>
+        </div>
     </form>
 
 </div>

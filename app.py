@@ -1,6 +1,6 @@
 from datetime import date
 from enums import Score_Enum
-
+from flask_cors import CORS, cross_origin
 from flask import Flask, render_template, redirect, url_for, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail, Message
@@ -10,6 +10,8 @@ from models import *
 
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 db = SQLAlchemy(app)
 app.config.update(
     MAIL_SERVER='smtp.gmail.com',
@@ -27,7 +29,9 @@ def hello():
     return render_template("index.html")
 
 
+
 @app.route('/formulario')
+@cross_origin()
 def formulario():
     return render_template("index.html"), 200
 
@@ -93,7 +97,8 @@ def cadastrar():
         score_dict = score(response)
 
 
-        send_mail("2002joao2002@gmail.com", data_dict)
+
+        send_mail("2002joao2002@gmail.com", score_dict)
 
         print(request.form)
 
