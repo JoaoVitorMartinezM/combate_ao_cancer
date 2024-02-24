@@ -1,3 +1,4 @@
+import datetime
 from datetime import date
 from enums import Score_Enum
 from flask_cors import CORS, cross_origin
@@ -6,7 +7,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail, Message
 from templates import replaces
 
-from models import *
+from waitress import serve
 
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
@@ -24,10 +25,58 @@ mail = Mail(app)
 mail.connect()
 
 
-@app.route("/enviado")
-def hello():
-    return render_template("index.html")
+class User(db.Model):
+    email = db.Column(db.String(100), primary_key=True, autoincrement=False)
+    sex = db.Column(db.String(20), nullable=False)
+    age = db.Column(db.Integer, nullable=False)
+    full_name = db.Column(db.String(100), nullable=False)
 
+    def __init__(self, email, fullname, age, sex):
+        self.email = email
+        self.full_name = fullname
+        self.age = age
+        self.sex = sex
+
+
+class Form(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    date = db.Column(db.Date, nullable=False)
+    has_disease = db.Column(db.String(100), nullable=True)
+    smoke = db.Column(db.Boolean, nullable=False)
+    quit_smoking = db.Column(db.Boolean, nullable=False)
+    drink_rarely = db.Column(db.Boolean, nullable=False)
+    drink = db.Column(db.Boolean, nullable=False)
+    have_cancer = db.Column(db.Boolean, nullable=False)
+    history_of_cancer = db.Column(db.Boolean, nullable=False)
+    went_dentist = db.Column(db.Boolean, nullable=False)
+    consume_mate = db.Column(db.Boolean, nullable=False)
+    sunscreen = db.Column(db.Boolean, nullable=False)
+    sunstroke = db.Column(db.Boolean, nullable=False)
+    skin_lesion = db.Column(db.Boolean, nullable=False)
+
+    user_mail = db.Column(db.String(100), db.ForeignKey('user.email'), nullable=False)
+
+    def __init__(self, has_disease, smoke, quit_smoking, drink_rarely,
+                 drink, have_cancer, history_of_cancer, went_dentist,
+                 consume_mate, sunscreen, sunstroke, skin_lesion, user_mail):
+        self.date = datetime.date.today()
+        self.has_disease = has_disease
+        self.smoke = smoke
+        self.quit_smoking = quit_smoking
+        self.drink_rarely = drink_rarely
+        self.drink = drink
+        self.have_cancer = have_cancer
+        self.history_of_cancer = history_of_cancer
+        self.went_dentist = went_dentist
+        self.consume_mate = consume_mate
+        self.sunscreen = sunscreen
+        self.sunstroke = sunstroke
+        self.skin_lesion = skin_lesion
+        self.user_mail = user_mail
+
+
+with app.app_context():
+    db.create_all()
 
 
 @app.route('/formulario')
@@ -96,15 +145,24 @@ def cadastrar():
 
         score_dict = score(response)
 
+        send_mail(user_mail, score_dict)
+
+        print(form.user_mail)
 
 
-        send_mail("2002joao2002@gmail.com", score_dict)
-
-        print(request.form)
-
-        return render_template("index.html"), 200
+        return render_template("sucessfull.html", id=form.id), 200
     else:
         return "Método GET não permitido", 405
+
+
+@app.route('/formulario/<int:id>', methods=['POST'])
+def editar(id):
+    if request.method == "POST":
+        form = Form.query.filter_by(id=id).first()
+        print(form.have_cancer)
+        return render_template("edit_form.html", form=form)
+    else:
+        "Metodo não permitido"
 
 
 def send_mail(recipient, data):
@@ -131,17 +189,7 @@ def score(data):
     skin_score = (Score_Enum.SKIN_LESION.value * skin_multiplier if data.skin_lesion or data.sunstroke else 0) + \
                  (
                      Score_Enum.SUNSCREEN.value if data.sunscreen else 0) + Score_Enum.HAVE_CANCER.value * cancer_multiplier
-    # base = 100
-    # result = base
-    # for key in iterable.keys():
-    #     if key[-1] == '2' and iterable[key]:
-    #         result -= base * 0.1
-    #     elif key[-1] == '1' and iterable[key]:
-    #         result -= base * 0.05
-    #     elif iterable[key]:
-    #         continue
-    #     elif key[-1] != '1' and key[-1] != '2' and not iterable[key]:
-    #         result -= base * 0.025
+
     return {
         'skin_score': skin_score,
         'mouth_score': mouth_score
@@ -149,4 +197,5 @@ def score(data):
 
 
 if __name__ == '__main__':
+    serve(app, host="0.0.0.0", port=8080)
     app.run()

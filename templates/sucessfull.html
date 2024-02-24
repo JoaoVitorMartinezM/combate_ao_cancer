@@ -1,0 +1,31 @@
+{% extends 'template.html' %}
+{% block content %}
+<div id="container" class="row align-items-center col-xl-6 offset-xl-3 col-md-8 offset-md-2 col-sm-10 offset-sm-1">
+    <form id="successfull" style="height: 300px; border-radius: 20px;"
+          class="d-flex flex-column justify-content-around col-10 offset-1 col-xl-10 offset-xl-1 shadow mb-5"
+          method="POST"
+          action="{{url_for('editar', id=id)}}" enctype="multipart/form-data">
+        <input type="hidden" value="{{id}}">
+
+        <h1 class="mx-auto">Formulário enviado com sucesso!</h1>
+        <p class="mx-auto">Obrigado por reponder nosso formulário. <b>Você receberá um email com mais informações.</b></p>
+        <div style="height: 10%" class="row d-flex justify-content-center col-xl-12 col-md-12 col-sm-12 col-12">
+
+
+            <div class="col-xl-3 col-md-4 col-sm-4 col-6 d-flex justify-content-center">
+
+                <button id="return-form" type="submit" class="btn btn-secondary ">Editar Resposta</button>
+
+            </div>
+            <div class="col-xl-3 col-md-4  col-sm-4 col-6 d-flex justify-content-center ">
+                <a href="http://localhost:5000/formulario">
+                    <button style="width: 100%;" id="next-form" type="button" class="btn btn-primary mx-auto">Outra Resposta</button>
+                </a>
+
+            </div>
+        </div>
+    </form>
+</div>
+
+
+{% endblock content %}
