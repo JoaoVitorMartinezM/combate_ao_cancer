@@ -5,7 +5,7 @@
           class="d-flex flex-column justify-content-around col-10 offset-1 col-xl-10 offset-xl-1 shadow mb-5"
           method="POST"
           action="{{url_for('editar', id=id)}}" enctype="multipart/form-data">
-        <input type="hidden" value="{{id}}">
+        <input type="hidden" name="form_id" value="{{id}}">
 
         <h1 class="mx-auto">Formulário enviado com sucesso!</h1>
         <p class="mx-auto">Obrigado por reponder nosso formulário. <b>Você receberá um email com mais informações.</b></p>

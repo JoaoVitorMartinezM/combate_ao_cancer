@@ -1,5 +1,9 @@
 import datetime
 from datetime import date
+
+from sqlalchemy import update
+from sqlalchemy.orm import backref
+
 from enums import Score_Enum
 from flask_cors import CORS, cross_origin
 from flask import Flask, render_template, redirect, url_for, request
@@ -26,21 +30,26 @@ mail.connect()
 
 
 class User(db.Model):
-    email = db.Column(db.String(100), primary_key=True, autoincrement=False)
+    __tablename__ = 'user'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    email = db.Column(db.String(100), nullable=False)
     sex = db.Column(db.String(20), nullable=False)
-    age = db.Column(db.Integer, nullable=False)
+    birthday = db.Column(db.Date, nullable=False)
     full_name = db.Column(db.String(100), nullable=False)
 
-    def __init__(self, email, fullname, age, sex):
+    def __init__(self, email, fullname, birthday, sex):
         self.email = email
         self.full_name = fullname
-        self.age = age
+        self.birthday = birthday
         self.sex = sex
 
 
 class Form(db.Model):
+    __tablename__ = 'form'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    date = db.Column(db.Date, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user = db.relationship('User', backref=backref("user", uselist=False))
+    date = db.Column(db.DateTime, nullable=False)
     has_disease = db.Column(db.String(100), nullable=True)
     smoke = db.Column(db.Boolean, nullable=False)
     quit_smoking = db.Column(db.Boolean, nullable=False)
@@ -54,12 +63,10 @@ class Form(db.Model):
     sunstroke = db.Column(db.Boolean, nullable=False)
     skin_lesion = db.Column(db.Boolean, nullable=False)
 
-    user_mail = db.Column(db.String(100), db.ForeignKey('user.email'), nullable=False)
-
     def __init__(self, has_disease, smoke, quit_smoking, drink_rarely,
                  drink, have_cancer, history_of_cancer, went_dentist,
                  consume_mate, sunscreen, sunstroke, skin_lesion, user_mail):
-        self.date = datetime.date.today()
+        self.date = datetime.datetime.now()
         self.has_disease = has_disease
         self.smoke = smoke
         self.quit_smoking = quit_smoking
@@ -72,7 +79,7 @@ class Form(db.Model):
         self.sunscreen = sunscreen
         self.sunstroke = sunstroke
         self.skin_lesion = skin_lesion
-        self.user_mail = user_mail
+        self.user_id = user_mail
 
 
 with app.app_context():
@@ -89,10 +96,9 @@ def formulario():
 def cadastrar():
     if request.method == "POST":
         full_name = request.form["full_name"]
-        age = request.form["date"]
+        birthday = request.form["date"]
+        birthday = birthday.split("-")
         sex = request.form["sexo"]
-        ano = age.split("-")
-        age = date.today().year - int(ano[0])
         user_mail = request.form["email"]
         listDiseases = ["diabetes", "hipotirioidismo", "hipertensao", "outro", "HIV", "lupus"]
         has_disease = ""
@@ -114,11 +120,9 @@ def cadastrar():
         sunstroke = True if request.form["lesoes-pele-2"].__eq__("sim") else False
         skin_lesion = True if request.form["lesoes-pele-3"].__eq__("sim") else False
 
-        user = User(user_mail, full_name, age, sex)
+        user = User(user_mail, full_name, date(month=int(birthday[1]), day=int(birthday[2]), year=int(birthday[0])),
+                    sex)
 
-        form = Form(has_disease, smoke, quit_smoking, drink_rarely,
-                    drink, have_cancer, history_of_cancer, went_dentist,
-                    consume_mate, sunscreen, sunstroke, skin_lesion, user.email)
         list_score = {
             'smoke-2': smoke, 'quit_smoking-1': quit_smoking, 'drink_rarely-1': drink_rarely,
             'drink-2': drink, 'have_cancer-2': have_cancer, 'history_of_cancer-1': history_of_cancer,
@@ -128,17 +132,23 @@ def cadastrar():
         }
 
         data_dict = {'full_name': full_name,
-                     'age': age,
+                     'age': birthday,
                      'sex': sex,
                      'has_disease': has_disease}
 
-        query = db.session.query(User).filter(User.email == user.email).first()
-        if not query:
-            db.session.add(user)
-            db.session.commit()
+        db.session.add(user)
+        db.session.commit()
+        query = db.session.query(User).filter_by(email=user.email, full_name=full_name).first()
+        print(query.id)
+
+        form = Form(has_disease, smoke, quit_smoking, drink_rarely,
+                    drink, have_cancer, history_of_cancer, went_dentist,
+                    consume_mate, sunscreen, sunstroke, skin_lesion, query.id)
         db.session.add(form)
         db.session.commit()
         response = db.get_or_404(Form, form.id)
+
+        print(form.date)
         db.session.close()
 
         data_dict.update(list_score)
@@ -147,8 +157,7 @@ def cadastrar():
 
         send_mail(user_mail, score_dict)
 
-        print(form.user_mail)
-
+        print(form.user_id)
 
         return render_template("sucessfull.html", id=form.id), 200
     else:
@@ -159,10 +168,85 @@ def cadastrar():
 def editar(id):
     if request.method == "POST":
         form = Form.query.filter_by(id=id).first()
-        print(form.have_cancer)
-        return render_template("edit_form.html", form=form)
+        birthday = date.__format__(form.user.birthday, "%Y-%m-%d")
+        sex = form.user.sex.__eq__("masculino")
+        teste = ["diabetes", "hipertensao", "hipotirioidismo", "HIV", "lupus"]
+        diseases = form.has_disease.split(" ")
+        diabetes = diseases.__contains__("diabetes")
+        hipertensao = diseases.__contains__("hipertensao")
+        hipotirioidismo = diseases.__contains__("hipotirioidismo")
+        HIV = diseases.__contains__("HIV")
+        lupus = diseases.__contains__("lupus")
+        outro = [elemento for elemento in diseases if elemento not in teste]
+        have_other = True if len(outro) > 0 else False
+
+
+        return render_template("edit_form.html", form=form, birthday=birthday, sex=sex, diabetes=diabetes,
+                               hipertensao=hipertensao, hipotirioidismo=hipotirioidismo,
+                               lupus=lupus, HIV=HIV, outro=outro[0], have_other=have_other)
     else:
         "Metodo não permitido"
+
+
+@app.route('/atualizar', methods=['GET', 'POST'])
+def atualizar():
+    if request.method == "POST":
+        birthday = request.form["date"]
+        birthday = birthday.split("-")
+        listDiseases = ["diabetes", "hipotirioidismo", "hipertensao", "outro", "HIV", "lupus"]
+        has_disease = ""
+        for disease in listDiseases:
+            try:
+                has_disease += request.form[disease] + " "
+            except:
+                continue
+        form = Form.query.filter_by(id=request.form['form_id']).first()
+        form.user.full_name = request.form["full_name"]
+        form.user.birthday = date(month=int(birthday[1]), day=int(birthday[2]), year=int(birthday[0]))
+        form.user.email = request.form["email"]
+        form.user.sex = request.form["sexo"]
+
+        form.has_disease = has_disease
+        form.smoke = True if request.form["habitos-sociais-1"].__eq__("fuma") else False
+        form.quit_smoking = True if not form.smoke and request.form["habitos-sociais-1"].__eq__("jah-fumou") else False
+        form.drink = True if request.form["habitos-sociais-2"].__eq__("sim-frequentemente") else False
+        form.drink_rarely = True if not form.drink and request.form["habitos-sociais-2"].__eq__(
+            "bebe-raramente") else False
+        form.have_cancer = True if request.form["historico-cancer-1"].__eq__("sim") else False
+        form.went_dentist = True if request.form["lesoes-boca-1"].__eq__("sim") else False
+        form.consume_mate = True if request.form["lesoes-boca-2"].__eq__("sim") else False
+        form.sunscreen = True if request.form["lesoes-pele-1"].__eq__("sim") else False
+        form.skin_lesion = True if request.form["lesoes-pele-3"].__eq__("sim") else False
+        form.sunstroke = True if request.form["lesoes-pele-2"].__eq__("sim") else False
+        db.session.add(form)
+
+        response = db.get_or_404(Form, form.id)
+
+        list_score = {
+            'smoke-2': form.smoke, 'quit_smoking-1': form.quit_smoking, 'drink_rarely-1': form.drink_rarely,
+            'drink-2': form.drink, 'have_cancer-2': form.have_cancer, 'history_of_cancer-1': form.history_of_cancer,
+            'went_dentist': form.went_dentist,
+            'consume_mate-2': form.consume_mate, 'sunscreen': form.sunscreen, 'sunstroke-2': form.sunstroke,
+            'skin_lesion-2': form.skin_lesion
+        }
+
+        data_dict = {'full_name': form.user.full_name,
+                     'age': birthday,
+                     'sex': form.user.sex,
+                     'has_disease': has_disease}
+
+        data_dict.update(list_score)
+
+        score_dict = score(response)
+
+        send_mail(form.user.email, score_dict)
+
+        db.session.commit()
+        db.session.close()
+
+        return render_template("sucessfull.html", id=request.form['form_id']), 200
+    else:
+        return "Método GET não permitido", 405
 
 
 def send_mail(recipient, data):
